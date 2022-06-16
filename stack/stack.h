@@ -12,6 +12,7 @@ class Stack{
         Stack();
         void push(T element);
         T pop(); 
+        T lookTop();
         bool isEmpty();
         void display();
         ~Stack();
@@ -36,6 +37,14 @@ T Stack<T>::pop(){
     this->top = element->getNext();
     delete element;
     return elementData;
+}
+
+template<class T>
+T Stack<T>::lookTop(){
+    if(this->top != NULL){
+        return top->getData();
+    }
+    return -1;
 }
 
 template<class T>
