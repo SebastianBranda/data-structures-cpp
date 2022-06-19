@@ -9,7 +9,6 @@ class Queue{
     Node<T>* front;
     Node<T>* rear;
 
-
     public:
     Queue();
     void enqueue(T element);
