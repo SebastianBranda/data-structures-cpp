@@ -50,7 +50,7 @@ void Tree<T>::insert(T element){
     node = this->root;
     while(node != NULL){
         parent = node;
-        if(node->getData()<element){
+        if(element < node->getData()){
             node = node->getLeftChild();
         }else{
             node = node->getRightChild();
@@ -59,7 +59,7 @@ void Tree<T>::insert(T element){
     node = new NodeBinary<T>(element);
     node->setLeftChild(NULL);
     node->setRightChild(NULL);
-    if(parent->getData()<node->getData()){
+    if(node->getData() < parent->getData()){
         parent->setLeftChild(node);
     }else{
         parent->setRightChild(node);
@@ -105,9 +105,11 @@ void Tree<T>::postorderWalk(){
 
 template<class T>
 void Tree<T>::postorderWalk(NodeBinary<T>* node){
-    this->postorderWalk(node->getLeftChild());;
-    this->postorderWalk(node->getRightChild());
-    std::cout << node->getData() << "\t ";
+    if(node != NULL){
+        this->postorderWalk(node->getLeftChild());;
+        this->postorderWalk(node->getRightChild());
+        std::cout << node->getData() << "\t ";
+    }
 }
 
 template<class T>
@@ -121,12 +123,12 @@ void Tree<T>::levelWalk(NodeBinary<T>* root){
     if(root == NULL){
         throw "ROOT IS NULL";
     }
-    Queue<T> q;
+    Queue<NodeBinary<T>*> q;
     NodeBinary<T>* node;
     q.enqueue(root);
     while(!q.isEmpty()){
         node = q.dequeue();
-        std::cout << node->getData() << "\t-> ";
+        std::cout << node->getData() << "\t ";
         if(node->getLeftChild() != NULL){
             q.enqueue(node->getLeftChild());
         }
