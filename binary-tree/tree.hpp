@@ -15,6 +15,7 @@ class Tree{
         void levelWalk(NodeBinary<T>* node); 
         NodeBinary<T>* seach(NodeBinary<T>* node, T element);
         void destructorRec(NodeBinary<T>* node);
+        void replaceElement(NodeBinary<T>* toReplace);
 
     public:
         Tree();
@@ -24,6 +25,7 @@ class Tree{
         void postorderWalk();
         void levelWalk(); 
         NodeBinary<T>* seach(T element);
+        void deleteElement(T element);
 
         ~Tree();
 };
@@ -65,7 +67,6 @@ void Tree<T>::insert(T element){
         parent->setRightChild(node);
     }
 }
-
 
 template<class T>
 void Tree<T>::preorderWalk(){
@@ -145,7 +146,7 @@ NodeBinary<T>* Tree<T>::seach(NodeBinary<T>* node, T element){
     }
     if(node->getData() == element){
         return node;
-    }else if(node->getData() < element){
+    }else if(element < node->getData() ){
         return this->seach(node->getLeftChild(), element);
     }else{
         return this->seach(node->getRightChild(), element);
@@ -166,6 +167,52 @@ void Tree<T>::destructorRec(NodeBinary<T>* node){
     this->destructorRec(node->getLeftChild());
     this->destructorRec(node->getRightChild());
     delete node;
+}
+
+template<class T>
+void Tree<T>::deleteElement(T element){
+    NodeBinary<T>* node = this->seach(element);
+    if(node == NULL){
+        throw "CANT DELETE AN ELEMENT THATS NOT IN THE TREE";
+    }
+
+    this->replaceElement(node);
+}
+
+// Private helper function
+template<class T>
+void Tree<T>::replaceElement(NodeBinary<T>* toReplace){
+    if(toReplace->getLeftChild() == NULL && toReplace->getRightChild() == NULL){
+        delete toReplace;
+        return;
+    }
+    NodeBinary<T>* replacementNode = NULL;
+    NodeBinary<T>* parentReplacementNode = toReplace;
+    if(toReplace->getLeftChild() != NULL && toReplace->getRightChild() == NULL){
+        // inorder predecesor
+        replacementNode = toReplace->getLeftChild();
+        while(replacementNode->getRightChild() != NULL){
+            parentReplacementNode = replacementNode;
+            replacementNode = replacementNode->getRightChild();
+        }
+        toReplace->setData(replacementNode->getData());
+    }else{
+        // inorder successor
+        replacementNode = toReplace->getRightChild();
+        while(replacementNode->getLeftChild() != NULL){
+            parentReplacementNode = replacementNode;
+            replacementNode = replacementNode->getLeftChild();
+        }
+        toReplace->setData(replacementNode->getData());
+    }   
+    if(replacementNode->getLeftChild() == NULL && replacementNode->getRightChild() == NULL){
+        if(parentReplacementNode->getLeftChild() == replacementNode){
+            parentReplacementNode->setLeftChild(NULL);
+        }else{
+            parentReplacementNode->setRightChild(NULL);
+        }
+    }
+    this->replaceElement(replacementNode);
 }
 
 template<class T>
